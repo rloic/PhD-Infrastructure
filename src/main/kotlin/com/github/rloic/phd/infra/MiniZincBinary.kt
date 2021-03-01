@@ -1,0 +1,44 @@
+package com.github.rloic.phd.infra
+
+import com.github.rloic.phd.core.mzn.*
+import com.github.rloic.phd.core.mzn.SolverKind.*
+import java.io.File
+
+class MiniZincBinary(private val executable: String): Mzn2FznCompiler {
+    companion object {
+        const val SOLVER_ARG_KEY = "--solver"
+        const val COMPILER_ARG_KEY = "--compile"
+        const val CP_SOLVER = "cp"
+        const val MIP_SOLVER = "mip"
+        const val SERIALIZED_DATA_ARG_KEY = "-D"
+    }
+
+    private fun toArg(solver: SolverKind) = when (solver) {
+        CP, CP_SAT, SAT -> CP_SOLVER
+        MIP -> MIP_SOLVER
+    }
+
+    private fun String.replaceLast(delimiter: String, replacement: String): String {
+        val index = lastIndexOf(delimiter)
+        if (index == -1) return this
+        return substring(0, index) + replacement + substring(index + delimiter.length)
+    }
+
+    override fun compile(mznModel: MznModel, data: Map<String, Any>, solver: SolverKind): FznModel {
+        val serializedData = data.entries.joinToString(";") { (key, value) -> "$key=$value" }
+
+        val process = if (data.isEmpty()) {
+            ProcessBuilder(executable, SOLVER_ARG_KEY, toArg(solver), COMPILER_ARG_KEY, mznModel.value.absolutePath)
+                .inheritIO()
+                .start()
+        } else {
+            ProcessBuilder(executable, SOLVER_ARG_KEY, toArg(solver), COMPILER_ARG_KEY, mznModel.value.absolutePath, SERIALIZED_DATA_ARG_KEY, serializedData)
+                .inheritIO()
+                .start()
+        }
+
+        process.waitFor()
+
+        return FznModel(File(mznModel.value.absolutePath.replaceLast(".mzn", ".fzn")))
+    }
+}
