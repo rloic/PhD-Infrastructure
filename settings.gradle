@@ -1,2 +1,4 @@
 rootProject.name = 'PhD Infrastructure'
 
+include ':phd-core'
+project(':phd-core').projectDir = file('../phd-core')
