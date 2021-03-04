@@ -14,7 +14,6 @@ dependencies {
     implementation project(':phd-core')
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
-    implementation files("/home/rloic/IdeaProjects/PhD Core/build/libs/PhD Core-1.0-SNAPSHOT.jar")
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 
