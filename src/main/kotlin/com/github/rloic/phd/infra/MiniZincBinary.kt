@@ -3,6 +3,7 @@ package com.github.rloic.phd.infra
 import com.github.rloic.phd.core.mzn.*
 import com.github.rloic.phd.core.mzn.SolverKind.*
 import java.io.File
+import java.lang.RuntimeException
 
 class MiniZincBinary(private val executable: String): Mzn2FznCompiler {
     companion object {
@@ -37,7 +38,7 @@ class MiniZincBinary(private val executable: String): Mzn2FznCompiler {
                 .start()
         }
 
-        process.waitFor()
+        if(process.waitFor() != 0) { throw RuntimeException("Minizinc failed to compile ${mznModel.value}") }
 
         return FznModel(File(mznModel.value.absolutePath.replaceLast(".mzn", ".fzn")))
     }
