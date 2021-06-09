@@ -2,16 +2,20 @@ package com.github.rloic.phd.infra
 
 import com.github.rloic.phd.core.mzn.*
 import com.github.rloic.phd.core.mzn.SolverKind.*
+import com.github.rloic.phd.core.utils.FromArgs
+import com.github.rloic.phd.core.utils.expectArgument
 import java.io.File
 import java.lang.RuntimeException
 
 class MiniZincBinary(private val executable: String): Mzn2FznCompiler {
-    companion object {
+    companion object : FromArgs<MiniZincBinary> {
         const val SOLVER_ARG_KEY = "--solver"
         const val COMPILER_ARG_KEY = "--compile"
         const val CP_SOLVER = "cp"
         const val MIP_SOLVER = "mip"
         const val SERIALIZED_DATA_ARG_KEY = "-D"
+
+        override fun from(args: Map<String, String>) = MiniZincBinary(args.expectArgument("MiniZinc"))
     }
 
     private fun toArg(solver: SolverKind) = when (solver) {
