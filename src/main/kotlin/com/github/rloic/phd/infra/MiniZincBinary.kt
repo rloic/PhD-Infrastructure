@@ -30,13 +30,13 @@ class MiniZincBinary(private val executable: String): Mzn2FznCompiler {
     }
 
     override fun compile(mznModel: MznModel, data: Map<String, Any>, solver: SolverKind): FznModel {
-        val serializedData = data.entries.joinToString(";") { (key, value) -> "$key=$value" }
 
         val process = if (data.isEmpty()) {
             ProcessBuilder(executable, SOLVER_ARG_KEY, toArg(solver), COMPILER_ARG_KEY, mznModel.value.absolutePath)
                 .inheritIO()
                 .start()
         } else {
+            val serializedData = data.entries.joinToString(";") { (key, value) -> "$key=$value" }
             ProcessBuilder(executable, SOLVER_ARG_KEY, toArg(solver), COMPILER_ARG_KEY, mznModel.value.absolutePath, SERIALIZED_DATA_ARG_KEY, serializedData)
                 .inheritIO()
                 .start()

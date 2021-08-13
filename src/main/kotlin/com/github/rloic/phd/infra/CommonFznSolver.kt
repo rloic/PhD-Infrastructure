@@ -1,8 +1,6 @@
 package com.github.rloic.phd.infra
 
 import com.github.rloic.phd.core.mzn.*
-import java.lang.RuntimeException
-import java.lang.StringBuilder
 
 abstract class CommonFznSolver(
     private val mzn2fzn: Mzn2FznCompiler,
