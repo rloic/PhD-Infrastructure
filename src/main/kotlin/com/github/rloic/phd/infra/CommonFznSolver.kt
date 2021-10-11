@@ -1,6 +1,7 @@
 package com.github.rloic.phd.infra
 
 import com.github.rloic.phd.core.mzn.*
+import com.github.rloic.phd.core.utils.logger
 
 abstract class CommonFznSolver(
     private val mzn2fzn: Mzn2FznCompiler,
@@ -55,6 +56,7 @@ abstract class CommonFznSolver(
         val fznModel = mzn2fzn.compile(model, data, solver)
 
         val command = buildCommand(fznModel)
+        logger.debug("%s", command.joinToString(" "))
         val process = ProcessBuilder(command)
             .start()
 
