@@ -17,8 +17,8 @@ abstract class CommonFznSolver(
 
     abstract fun buildCommand(model: FznModel): List<String>
 
-    override fun optimize(model: MznModel.Optimization, data: Map<String, Any>): MznSolution? {
-        val (command, process) = createCommandAndProcess(model, data)
+    override fun optimize(model: MznModel.Optimization, data: Map<String, Any>, vararg mznArgs: String): MznSolution? {
+        val (command, process) = createCommandAndProcess(model, data, *mznArgs)
 
         var prevSolution = StringBuilder()
         var solution = StringBuilder()
@@ -46,25 +46,25 @@ abstract class CommonFznSolver(
         }
     }
 
-    override fun solveOnce(model: MznModel.CompleteSearch, data: Map<String, Any>): MznSolution? =
-        solve(model, data)
+    override fun solveOnce(model: MznModel.CompleteSearch, data: Map<String, Any>, vararg mznArgs: String): MznSolution? =
+        solve(model, data, *mznArgs)
 
-    override fun solveOnce(model: MznModel.PartialSearch, data: Map<String, Any>): MznSolution? =
-        solve(model, data)
+    override fun solveOnce(model: MznModel.PartialSearch, data: Map<String, Any>, vararg mznArgs: String): MznSolution? =
+        solve(model, data, *mznArgs)
 
-    private fun createCommandAndProcess(model: MznModel, data: Map<String, Any>): CommandAndProcess {
-        val fznModel = mzn2fzn.compile(model, data, solver)
+    private fun createCommandAndProcess(model: MznModel, data: Map<String, Any>, vararg mznArgs: String): CommandAndProcess {
+        val fznModel = mzn2fzn.compile(model, data, solver, *mznArgs)
 
         val command = buildCommand(fznModel)
-        logger.debug("%s", command.joinToString(" "))
+        logger.debug(command.joinToString(" "))
         val process = ProcessBuilder(command)
             .start()
 
         return CommandAndProcess(command, process)
     }
 
-    private fun solve(model: MznModel, data: Map<String, Any>): MznSolution? {
-        val (command, process) = createCommandAndProcess(model, data)
+    private fun solve(model: MznModel, data: Map<String, Any>, vararg mznArgs: String): MznSolution? {
+        val (command, process) = createCommandAndProcess(model, data, *mznArgs)
 
         val solution = StringBuilder()
         process.inputStream.bufferedReader().useLines { lines ->
