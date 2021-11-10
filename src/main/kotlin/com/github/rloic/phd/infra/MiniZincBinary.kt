@@ -31,7 +31,7 @@ class MiniZincBinary(private val executable: String): Mzn2FznCompiler {
         return substring(0, index) + replacement + substring(index + delimiter.length)
     }
 
-    override fun compile(mznModel: MznModel, data: Map<String, Any>, solver: SolverKind): FznModel {
+    override fun compile(mznModel: MznModel, data: Map<String, Any>, solver: SolverKind, vararg mznArgs: String): FznModel {
 
         val process = if (data.isEmpty()) {
             logger.debug("%s %s %s %s %s %s %s", executable, SOLVER_ARG_KEY, toArg(solver), COMPILER_ARG_KEY, mznModel.value.absolutePath)
