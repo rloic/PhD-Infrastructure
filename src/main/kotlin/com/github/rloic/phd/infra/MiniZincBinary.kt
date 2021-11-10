@@ -3,7 +3,6 @@ package com.github.rloic.phd.infra
 import com.github.rloic.phd.core.mzn.*
 import com.github.rloic.phd.core.mzn.SolverKind.*
 import com.github.rloic.phd.core.utils.FromArgs
-import com.github.rloic.phd.core.utils.Logger
 import com.github.rloic.phd.core.utils.expectArgument
 import com.github.rloic.phd.core.utils.logger
 import java.io.File
@@ -34,14 +33,14 @@ class MiniZincBinary(private val executable: String): Mzn2FznCompiler {
     override fun compile(mznModel: MznModel, data: Map<String, Any>, solver: SolverKind, vararg mznArgs: String): FznModel {
 
         val process = if (data.isEmpty()) {
-            logger.debug("%s %s %s %s %s %s %s", executable, SOLVER_ARG_KEY, toArg(solver), COMPILER_ARG_KEY, mznModel.value.absolutePath)
-            ProcessBuilder(executable, SOLVER_ARG_KEY, toArg(solver), COMPILER_ARG_KEY, mznModel.value.absolutePath)
+            logger.debug(listOf(executable, SOLVER_ARG_KEY, toArg(solver), *mznArgs, COMPILER_ARG_KEY, mznModel.value.absolutePath).joinToString(" "))
+            ProcessBuilder(executable, SOLVER_ARG_KEY, toArg(solver), COMPILER_ARG_KEY, *mznArgs, mznModel.value.absolutePath)
                 .inheritIO()
                 .start()
         } else {
             val serializedData = data.entries.joinToString(";") { (key, value) -> "$key=$value" }
-            logger.debug("%s %s %s %s %s %s %s", executable, SOLVER_ARG_KEY, toArg(solver), COMPILER_ARG_KEY, mznModel.value.absolutePath, SERIALIZED_DATA_ARG_KEY, serializedData)
-            ProcessBuilder(executable, SOLVER_ARG_KEY, toArg(solver), COMPILER_ARG_KEY, mznModel.value.absolutePath, SERIALIZED_DATA_ARG_KEY, serializedData)
+            logger.debug(listOf(executable, SOLVER_ARG_KEY, toArg(solver), COMPILER_ARG_KEY, *mznArgs, mznModel.value.absolutePath, SERIALIZED_DATA_ARG_KEY, serializedData).joinToString(" "))
+            ProcessBuilder(executable, SOLVER_ARG_KEY, toArg(solver), COMPILER_ARG_KEY, *mznArgs, mznModel.value.absolutePath, SERIALIZED_DATA_ARG_KEY, serializedData)
                 .inheritIO()
                 .start()
         }
