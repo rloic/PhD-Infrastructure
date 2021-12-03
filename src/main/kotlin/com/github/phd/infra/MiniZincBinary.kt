@@ -1,10 +1,10 @@
-package com.github.rloic.phd.infra
+package com.github.phd.infra
 
-import com.github.rloic.phd.core.mzn.*
-import com.github.rloic.phd.core.mzn.SolverKind.*
-import com.github.rloic.phd.core.utils.FromArgs
-import com.github.rloic.phd.core.utils.expectArgument
-import com.github.rloic.phd.core.utils.logger
+import com.github.phd.core.mzn.*
+import com.github.phd.core.mzn.SolverKind.*
+import com.github.phd.core.utils.FromArgs
+import com.github.phd.core.utils.expectArgument
+import com.github.phd.core.utils.logger
 import java.io.File
 import java.lang.RuntimeException
 
