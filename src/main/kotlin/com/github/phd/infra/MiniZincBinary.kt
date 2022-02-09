@@ -7,6 +7,7 @@ import com.github.phd.core.utils.expectArgument
 import com.github.phd.core.utils.logger
 import java.io.File
 import java.lang.RuntimeException
+import java.lang.StringBuilder
 
 class MiniZincBinary(private val executable: String): Mzn2FznCompiler {
     companion object : FromArgs<MiniZincBinary> {
@@ -28,6 +29,22 @@ class MiniZincBinary(private val executable: String): Mzn2FznCompiler {
         val index = lastIndexOf(delimiter)
         if (index == -1) return this
         return substring(0, index) + replacement + substring(index + delimiter.length)
+    }
+
+    override fun format(mznSolution: MznSolution, oznFile: File): MznSolution {
+        val tmpFile = File.createTempFile("solution", "sol")
+
+        val process = ProcessBuilder(executable, "--ozn-file", oznFile.absolutePath)
+            .redirectInput(tmpFile)
+            .start()
+
+        val content = StringBuilder()
+        process.inputStream.bufferedReader().useLines { lines ->
+            for (line in lines) { content.appendLine(line) }
+        }
+
+        process.waitFor()
+        return MznSolution(content.toString())
     }
 
     override fun compile(mznModel: MznModel, data: Map<String, Any>, solver: SolverKind, vararg mznArgs: String): FznModel {
