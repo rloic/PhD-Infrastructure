@@ -32,7 +32,8 @@ class MiniZincBinary(private val executable: String): Mzn2FznCompiler {
     }
 
     override fun format(mznSolution: MznSolution, oznFile: File): MznSolution {
-        val tmpFile = File.createTempFile("solution", "sol")
+        val tmpFile = File.createTempFile("solution", "in")
+        tmpFile.writeText(mznSolution.content)
 
         val process = ProcessBuilder(executable, "--ozn-file", oznFile.absolutePath)
             .redirectInput(tmpFile)
